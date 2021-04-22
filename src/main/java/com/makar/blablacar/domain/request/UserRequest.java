@@ -1,36 +1,12 @@
 package com.makar.blablacar.domain.request;
 
-import java.time.LocalDate;
+import lombok.Data;
 
+@Data
 public class UserRequest {
 
-    private String login;
+    private String name;
 
-    private String fullName;
+    private String department;
 
-    private LocalDate dob;
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
 }

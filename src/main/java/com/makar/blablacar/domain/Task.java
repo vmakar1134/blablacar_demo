@@ -1,11 +1,18 @@
 package com.makar.blablacar.domain;
 
+import lombok.Data;
+import org.springframework.lang.NonNull;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static javax.persistence.CascadeType.*;
+
 @Entity
+@Data
 public class Task {
 
     @Id
@@ -14,74 +21,32 @@ public class Task {
 
     private LocalDate createdAt;
 
-    private String theme;
+    private String title;
 
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name ="user_id", insertable = false, updatable = false)
-    private User author;
+    private String authorName;
+
+    @Enumerated
+    private TaskStatus status;
+
+    @OneToMany(mappedBy = "task", cascade = ALL)
+    private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User assignee;
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", cascade = {PERSIST, MERGE})
     private List<Attachment> attachments = new ArrayList<>();
 
-    public Long getId() {
-        return id;
+    public Task addAttachment(@NonNull Attachment attachment) {
+        this.attachments.add(checkNotNull(attachment));
+        return this;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getTheme() {
-        return theme;
-    }
-
-    public void setTheme(String theme) {
-        this.theme = theme;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
-    public User getAssignee() {
-        return assignee;
-    }
-
-    public void setAssignee(User assignee) {
-        this.assignee = assignee;
-    }
-
-    public List<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<Attachment> attachments) {
-        this.attachments = attachments;
+    public Task addComment(@NonNull Comment comment) {
+        this.comments.add(checkNotNull(comment));
+        return this;
     }
 }

@@ -1,11 +1,13 @@
 package com.makar.blablacar.service;
 
-
+import com.makar.blablacar.domain.User;
 import com.makar.blablacar.domain.request.UserRequest;
-import org.springframework.web.multipart.MultipartFile;
+import com.makar.blablacar.domain.response.UserResponse;
 
 public interface UserService {
 
-    String updateUser(UserRequest request, MultipartFile attachment);
+    UserResponse save(UserRequest request);
+
+    User get(Long id);
 
 }

@@ -16,11 +16,11 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @BeanMapping(resultType = User.class)
-    User userFrom(UserRequest userRequest);
+    User toEntity(UserRequest userRequest);
 
     @BeanMapping(resultType = UserResponse.class)
-    UserResponse userResponseFrom(User user);
+    UserResponse toResponse(User task);
 
-    List<UserResponse> userResponseFrom(List<User> users);
+    List<UserResponse> toResponse(List<User> tasks);
 
 }
