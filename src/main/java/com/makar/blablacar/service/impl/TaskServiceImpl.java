@@ -70,7 +70,7 @@ public class TaskServiceImpl implements TaskService {
         Sort.Direction direction = getSortDirection(sort);
         String property = getSortProperty(sort);
         TaskSpecification taskSpecification = new TaskSpecification(filterCriteria);
-        List<Task> tasks = taskRepository.findAllByAssigneeId(taskSpecification, Sort.by(direction, property));
+        List<Task> tasks = taskRepository.findAll(taskSpecification, Sort.by(direction, property));
         tasks.forEach(t -> t.setAttachments(getDecompressedAttachments(t)));
         return TASK_MAPPER.toResponse(tasks);
     }
