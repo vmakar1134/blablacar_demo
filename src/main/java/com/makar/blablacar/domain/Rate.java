@@ -2,10 +2,7 @@ package com.makar.blablacar.domain;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -16,5 +13,8 @@ public class Rate {
     private Long id;
 
     private Integer value;
+
+    @OneToOne
+    private User user;
 
 }
