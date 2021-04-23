@@ -12,5 +12,4 @@ public class TaskUpdateRequest {
 
     private String description;
 
-    private String commentText;
 }

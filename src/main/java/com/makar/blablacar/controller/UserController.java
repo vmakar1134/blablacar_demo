@@ -5,10 +5,7 @@ import com.makar.blablacar.domain.response.UserResponse;
 import com.makar.blablacar.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -19,7 +16,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PutMapping()
+    @PostMapping()
     public ResponseEntity<UserResponse> save(@RequestBody UserRequest request) {
         UserResponse response = userService.save(request);
         return new ResponseEntity<>(response, CREATED);

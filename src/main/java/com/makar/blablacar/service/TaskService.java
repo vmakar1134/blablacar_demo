@@ -2,6 +2,7 @@ package com.makar.blablacar.service;
 
 
 import com.makar.blablacar.domain.FilterCriteria;
+import com.makar.blablacar.domain.Task;
 import com.makar.blablacar.domain.request.TaskRequest;
 import com.makar.blablacar.domain.request.TaskUpdateRequest;
 import com.makar.blablacar.domain.response.TaskResponse;
@@ -19,5 +20,5 @@ public interface TaskService {
 
     TaskResponse get(Long id);
 
-    void removeComment(Long commentId);
+    Task getById(Long id);
 }

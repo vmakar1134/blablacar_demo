@@ -1,6 +1,7 @@
 package com.makar.blablacar.controller;
 
 import com.makar.blablacar.domain.FilterCriteria;
+import com.makar.blablacar.domain.request.CommentRequest;
 import com.makar.blablacar.domain.request.TaskRequest;
 import com.makar.blablacar.domain.request.TaskUpdateRequest;
 import com.makar.blablacar.domain.response.TaskResponse;
@@ -16,17 +17,18 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/task")
 public class TaskController {
 
     private final TaskService taskService;
 
-    @PutMapping("")
+    @PostMapping("")
     public ResponseEntity<TaskResponse> create(@RequestBody TaskRequest taskRequest) {
         TaskResponse response = taskService.create(taskRequest);
         return new ResponseEntity<>(response, CREATED);
     }
 
-    @PostMapping("{id}")
+    @PutMapping("{id}")
     public ResponseEntity<TaskResponse> update(@PathVariable Long id,
                                                @RequestBody(required = false) TaskUpdateRequest request,
                                                @RequestParam(value = "attachment", required = false) MultipartFile attachment) {
@@ -34,25 +36,18 @@ public class TaskController {
         return new ResponseEntity<>(response, OK);
     }
 
-    @GetMapping()
+    @GetMapping("all")
     public ResponseEntity<List<TaskResponse>> getTasks(@RequestParam(defaultValue = "id") String sort,
                                                        @RequestParam String fieldName,
                                                        @RequestParam String fieldValue) {
         FilterCriteria filterCriteria = new FilterCriteria(fieldName, fieldValue);
         List<TaskResponse> response = taskService.getAll(sort, filterCriteria);
-        return new ResponseEntity<>(response, FOUND);
+        return new ResponseEntity<>(response, OK);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("details/{id}")
     public ResponseEntity<TaskResponse> getTask(@PathVariable("id") Long id) {
         TaskResponse response = taskService.get(id);
-        return new ResponseEntity<>(response, FOUND);
-    }
-
-
-    @DeleteMapping("deleteComment/{commentId}")
-    public ResponseEntity deleteComment(@PathVariable("commentId") Long commentId) {
-        taskService.removeComment(commentId);
-        return new ResponseEntity<>(ACCEPTED);
+        return new ResponseEntity<>(response, OK);
     }
 }

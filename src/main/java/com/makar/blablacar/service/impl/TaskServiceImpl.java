@@ -1,6 +1,7 @@
 package com.makar.blablacar.service.impl;
 
 import com.makar.blablacar.domain.*;
+import com.makar.blablacar.domain.request.CommentRequest;
 import com.makar.blablacar.domain.request.TaskRequest;
 import com.makar.blablacar.domain.request.TaskUpdateRequest;
 import com.makar.blablacar.domain.response.TaskResponse;
@@ -52,9 +53,6 @@ public class TaskServiceImpl implements TaskService {
         User user = userService.get(request.getAssigneeId());
         task.setAssignee(user);
         task.setStatus(request.getStatus());
-        if (Objects.nonNull(request.getCommentText())) {
-            task.addComment(new Comment(request.getCommentText()));
-        }
     }
 
     @Override
@@ -80,7 +78,7 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findByIdFetch(id).orElseThrow(() -> new EntityNotFoundException(id));
         List<Attachment> attachments = getDecompressedAttachments(task);
         task.setAttachments(attachments);
-        return TASK_MAPPER.toResponse(task);
+        return TASK_MAPPER.toDetailResponse(task);
     }
 
     private List<Attachment> getDecompressedAttachments(Task task) {
@@ -88,11 +86,6 @@ public class TaskServiceImpl implements TaskService {
                 .stream()
                 .map(Attachment::decompressData)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public void removeComment(Long commentId) {
-        commentRepository.deleteById(commentId);
     }
 
     private Sort.Direction getSortDirection(String string) {
@@ -116,7 +109,8 @@ public class TaskServiceImpl implements TaskService {
         return strings[0];
     }
 
-    private Task getById(Long id) {
+    @Override
+    public Task getById(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
     }
 }
