@@ -1,5 +1,6 @@
 package com.makar.blablacar.handler;
 
+import com.makar.blablacar.exception.AttachmentProcessingException;
 import com.makar.blablacar.exception.EntityNotFoundException;
 import com.makar.blablacar.exception.NonUniqueFieldException;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,14 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         body.put("message", "Cannot duplicate filed value");
         body.put("field", ex.getFieldName());
         body.put("value", ex.getFieldValue());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AttachmentProcessingException.class)
+    public ResponseEntity<Object> handleAttachmentProcessing(AttachmentProcessingException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", "Cannot process attachment data");
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }

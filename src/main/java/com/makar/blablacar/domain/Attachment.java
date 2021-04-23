@@ -1,5 +1,6 @@
 package com.makar.blablacar.domain;
 
+import com.makar.blablacar.exception.AttachmentProcessingException;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,35 +36,22 @@ public class Attachment {
         if (isNull(file)) {
             return this;
         }
-        byte[] data = new byte[0];
-        try {
-            data = file.getBytes();
-        } catch (IOException ignored) {
-        }
-
-        Deflater deflater = new Deflater();
-        deflater.setInput(data);
-        deflater.finish();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] buffer = new byte[1024];
-        while (!deflater.finished()) {
-            int count = deflater.deflate(buffer);
-            outputStream.write(buffer, 0, count);
-        }
-        try {
-            outputStream.close();
-        } catch (IOException ignored) {
-        }
+        Deflater deflater = getDeflater(getBytes(file));
+        ByteArrayOutputStream outputStream = processDeflater(deflater);
         this.data = outputStream.toByteArray();
         return this;
     }
 
     public Attachment decompressData() {
-        if (isNull(data)) {
+        if (isNull(this.data)) {
             return this;
         }
-        Inflater inflater = new Inflater();
-        inflater.setInput(data);
+        ByteArrayOutputStream outputStream = processInflater(getInflater());
+        this.data = outputStream.toByteArray();
+        return this;
+    }
+
+    private ByteArrayOutputStream processInflater(Inflater inflater) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
         byte[] buffer = new byte[1024];
         try {
@@ -71,10 +59,52 @@ public class Attachment {
                 int count = inflater.inflate(buffer);
                 outputStream.write(buffer, 0, count);
             }
-            outputStream.close();
-        } catch (IOException | DataFormatException ioe) {
+        } catch (DataFormatException ex) {
+            throw new AttachmentProcessingException(ex);
         }
-        this.data = outputStream.toByteArray();
-        return this;
+        closeStream(outputStream);
+        return outputStream;
     }
+
+    private ByteArrayOutputStream processDeflater(Deflater deflater) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+        byte[] buffer = new byte[1024];
+        while (!deflater.finished()) {
+            int count = deflater.deflate(buffer);
+            outputStream.write(buffer, 0, count);
+        }
+        closeStream(outputStream);
+        return outputStream;
+    }
+
+    private void closeStream(ByteArrayOutputStream outputStream) {
+        try {
+            outputStream.close();
+        } catch (IOException ex) {
+            throw new AttachmentProcessingException(ex);
+        }
+    }
+
+    private Inflater getInflater() {
+        Inflater inflater = new Inflater();
+        inflater.setInput(this.data);
+        return inflater;
+    }
+
+    private Deflater getDeflater(byte[] data) {
+        Deflater deflater = new Deflater();
+        deflater.setInput(data);
+        deflater.finish();
+        return deflater;
+    }
+
+    private byte[] getBytes(MultipartFile file) {
+        try {
+            this.data = file.getBytes();
+        } catch (IOException ex) {
+            throw new AttachmentProcessingException(file.getOriginalFilename(), ex);
+        }
+        return this.data;
+    }
+
 }
