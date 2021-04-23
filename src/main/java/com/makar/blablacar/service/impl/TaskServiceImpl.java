@@ -6,7 +6,6 @@ import com.makar.blablacar.domain.request.TaskUpdateRequest;
 import com.makar.blablacar.domain.response.TaskResponse;
 import com.makar.blablacar.exception.EntityNotFoundException;
 import com.makar.blablacar.mapper.TaskMapper;
-import com.makar.blablacar.repository.CommentRepository;
 import com.makar.blablacar.repository.TaskRepository;
 import com.makar.blablacar.service.RateService;
 import com.makar.blablacar.service.TaskService;
