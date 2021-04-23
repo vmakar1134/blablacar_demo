@@ -1,7 +1,6 @@
 package com.makar.blablacar.service.impl;
 
 import com.makar.blablacar.domain.*;
-import com.makar.blablacar.domain.request.CommentRequest;
 import com.makar.blablacar.domain.request.TaskRequest;
 import com.makar.blablacar.domain.request.TaskUpdateRequest;
 import com.makar.blablacar.domain.response.TaskResponse;
@@ -9,6 +8,7 @@ import com.makar.blablacar.exception.EntityNotFoundException;
 import com.makar.blablacar.mapper.TaskMapper;
 import com.makar.blablacar.repository.CommentRepository;
 import com.makar.blablacar.repository.TaskRepository;
+import com.makar.blablacar.service.RateService;
 import com.makar.blablacar.service.TaskService;
 import com.makar.blablacar.service.UserService;
 import com.makar.blablacar.specification.TaskSpecification;
@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +30,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
 
-    private final CommentRepository commentRepository;
+    private final RateService rateService;
 
     private final TaskMapper TASK_MAPPER = TaskMapper.INSTANCE;
 
@@ -69,19 +68,27 @@ public class TaskServiceImpl implements TaskService {
         String property = getSortProperty(sort);
         TaskSpecification taskSpecification = new TaskSpecification(filterCriteria);
         List<Task> tasks = taskRepository.findAll(taskSpecification, Sort.by(direction, property));
-        tasks.forEach(t -> t.setAttachments(getDecompressedAttachments(t)));
+        for (Task task : tasks) {
+            User assignee = task.getAssignee();
+            assignee.setRate(updateRate(assignee));
+            task.setAttachments(decompressAttachmentData(task));
+        }
         return TASK_MAPPER.toResponse(tasks);
     }
 
     @Override
     public TaskResponse get(Long id) {
         Task task = taskRepository.findByIdFetch(id).orElseThrow(() -> new EntityNotFoundException(id));
-        List<Attachment> attachments = getDecompressedAttachments(task);
+        List<Attachment> attachments = decompressAttachmentData(task);
         task.setAttachments(attachments);
         return TASK_MAPPER.toDetailResponse(task);
     }
 
-    private List<Attachment> getDecompressedAttachments(Task task) {
+    private Rate updateRate(User user) {
+        return rateService.getUpdatedRate(user.getId());
+    }
+
+    private List<Attachment> decompressAttachmentData(Task task) {
         return task.getAttachments()
                 .stream()
                 .map(Attachment::decompressData)
