@@ -13,5 +13,4 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
 
     @Query(value = "select t from Task t fetch all properties where t.id = :id")
     Optional<Task> findByIdFetch(Long id);
-
 }

@@ -1,16 +1,27 @@
 package com.makar.blablacar.controller;
 
-import com.makar.blablacar.service.TaskService;
-import org.springframework.web.bind.annotation.*;
+import com.makar.blablacar.domain.request.UserRequest;
+import com.makar.blablacar.domain.response.UserResponse;
+import com.makar.blablacar.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    private final TaskService taskService;
+    private final UserService userService;
 
-    public UserController(TaskService taskService) {
-        this.taskService = taskService;
+    @PutMapping()
+    public ResponseEntity<UserResponse> save(@RequestBody UserRequest request) {
+        UserResponse response = userService.save(request);
+        return new ResponseEntity<>(response, CREATED);
     }
-
 }

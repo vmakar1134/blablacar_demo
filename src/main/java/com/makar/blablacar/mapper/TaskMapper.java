@@ -22,5 +22,4 @@ public interface TaskMapper {
     TaskResponse toResponse(Task task);
 
     List<TaskResponse> toResponse(List<Task> tasks);
-
 }

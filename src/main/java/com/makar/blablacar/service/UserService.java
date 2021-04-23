@@ -9,5 +9,4 @@ public interface UserService {
     UserResponse save(UserRequest request);
 
     User get(Long id);
-
 }

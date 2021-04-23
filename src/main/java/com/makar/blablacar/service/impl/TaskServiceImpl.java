@@ -119,6 +119,4 @@ public class TaskServiceImpl implements TaskService {
     private Task getById(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
     }
-
-
 }

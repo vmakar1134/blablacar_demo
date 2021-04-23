@@ -8,5 +8,4 @@ public class CommentResponse {
     private Long id;
 
     private String text;
-
 }

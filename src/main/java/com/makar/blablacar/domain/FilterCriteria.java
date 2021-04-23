@@ -10,5 +10,4 @@ public class FilterCriteria {
     private String fieldName;
 
     private String fieldValue;
-
 }

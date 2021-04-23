@@ -106,5 +106,4 @@ public class Attachment {
         }
         return this.data;
     }
-
 }

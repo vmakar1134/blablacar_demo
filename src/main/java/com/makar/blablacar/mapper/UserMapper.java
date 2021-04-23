@@ -22,5 +22,4 @@ public interface UserMapper {
     UserResponse toResponse(User task);
 
     List<UserResponse> toResponse(List<User> tasks);
-
 }

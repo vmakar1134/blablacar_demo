@@ -17,5 +17,4 @@ public class AttachmentProcessingException extends RuntimeException {
         super(cause);
         this.filename = filename;
     }
-
 }
