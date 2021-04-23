@@ -1,9 +1,6 @@
 package com.makar.blablacar.service.impl;
 
-import com.makar.blablacar.domain.Attachment;
-import com.makar.blablacar.domain.Comment;
-import com.makar.blablacar.domain.Task;
-import com.makar.blablacar.domain.User;
+import com.makar.blablacar.domain.*;
 import com.makar.blablacar.domain.request.TaskRequest;
 import com.makar.blablacar.domain.request.TaskUpdateRequest;
 import com.makar.blablacar.domain.response.TaskResponse;
@@ -13,6 +10,7 @@ import com.makar.blablacar.repository.CommentRepository;
 import com.makar.blablacar.repository.TaskRepository;
 import com.makar.blablacar.service.TaskService;
 import com.makar.blablacar.service.UserService;
+import com.makar.blablacar.specification.TaskSpecification;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
@@ -68,10 +66,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskResponse> getAll(Long userId, String sort) {
+    public List<TaskResponse> getAll(String sort, FilterCriteria filterCriteria) {
         Sort.Direction direction = getSortDirection(sort);
         String property = getSortProperty(sort);
-        List<Task> tasks = taskRepository.findAllByAssigneeIdFetch(userId, Sort.by(direction, property));
+        TaskSpecification taskSpecification = new TaskSpecification(filterCriteria);
+        List<Task> tasks = taskRepository.findAllByAssigneeId(taskSpecification, Sort.by(direction, property));
         tasks.forEach(t -> t.setAttachments(getDecompressedAttachments(t)));
         return TASK_MAPPER.toResponse(tasks);
     }

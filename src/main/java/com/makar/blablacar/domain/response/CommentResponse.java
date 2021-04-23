@@ -3,12 +3,10 @@ package com.makar.blablacar.domain.response;
 import lombok.Data;
 
 @Data
-public class UserResponse {
+public class CommentResponse {
 
     private Long id;
 
-    private String name;
-
-    private String department;
+    private String text;
 
 }

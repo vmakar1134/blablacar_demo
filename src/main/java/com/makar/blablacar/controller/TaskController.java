@@ -1,5 +1,6 @@
 package com.makar.blablacar.controller;
 
+import com.makar.blablacar.domain.FilterCriteria;
 import com.makar.blablacar.domain.request.TaskRequest;
 import com.makar.blablacar.domain.request.TaskUpdateRequest;
 import com.makar.blablacar.domain.response.TaskResponse;
@@ -33,10 +34,12 @@ public class TaskController {
         return new ResponseEntity<>(response, OK);
     }
 
-    @GetMapping("task/{userId}")
-    public ResponseEntity<List<TaskResponse>> getTasks(@PathVariable Long userId,
-                                                       @RequestParam(defaultValue = "id") String sort) {
-        List<TaskResponse> response = taskService.getAll(userId, sort);
+    @GetMapping()
+    public ResponseEntity<List<TaskResponse>> getTasks(@RequestParam(defaultValue = "id") String sort,
+                                                       @RequestParam String fieldName,
+                                                       @RequestParam String fieldValue) {
+        FilterCriteria filterCriteria = new FilterCriteria(fieldName, fieldValue);
+        List<TaskResponse> response = taskService.getAll(sort, filterCriteria);
         return new ResponseEntity<>(response, FOUND);
     }
 
@@ -47,7 +50,7 @@ public class TaskController {
     }
 
 
-    @DeleteMapping("comment/{commentId}")
+    @DeleteMapping("deleteComment/{commentId}")
     public ResponseEntity deleteComment(@PathVariable("commentId") Long commentId) {
         taskService.removeComment(commentId);
         return new ResponseEntity<>(ACCEPTED);

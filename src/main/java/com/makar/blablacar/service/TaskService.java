@@ -1,6 +1,7 @@
 package com.makar.blablacar.service;
 
 
+import com.makar.blablacar.domain.FilterCriteria;
 import com.makar.blablacar.domain.request.TaskRequest;
 import com.makar.blablacar.domain.request.TaskUpdateRequest;
 import com.makar.blablacar.domain.response.TaskResponse;
@@ -14,7 +15,7 @@ public interface TaskService {
 
     TaskResponse create(TaskRequest request);
 
-    List<TaskResponse> getAll(Long userId, String sort);
+    List<TaskResponse> getAll(String sort, FilterCriteria filterCriteria);
 
     TaskResponse get(Long id);
 
